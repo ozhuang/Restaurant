@@ -1,5 +1,9 @@
 package Restaurant;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -129,7 +133,7 @@ public class Order
 		System.out.println("================THE NTU RESTAURANT================= ");
 		System.out.println("Staff Name :" +staff.getName());
 		System.out.println("Table ID: "+r.getTableNo());
-		System.out.println("Date(DD/MM/YYYY);" +DATE_FORMAT.getDate(d1));
+		System.out.println("Date(DD/MM/YYYY):" +DATE_FORMAT.getDate(d1));
 		System.out.println("---------------------------------------------------");
 		
 		if(itemList.size()>0)
@@ -147,6 +151,16 @@ public class Order
 		System.out.println("TOTAL : " + df.format((totalBill)));
 		System.out.println("============= Thank you! Please come again! =============");
 		
+		// save to order.txt
+		
+		try(PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("order.txt",true))))
+    	{
+    		out.print("\n"+DATE_FORMAT.getDate(d1)+","+bill);
+    	}
+    	catch(IOException ex)
+    	{
+    		ex.printStackTrace();
+    	}
 	}
 	
 	
