@@ -17,14 +17,12 @@ import java.util.Scanner;
 
 
 public class Table {
-	private int size, tableNo;
-	private int isoccupied;
+	public int size, tableNo;
+	public int isoccupied;
 	private ArrayList<ReservationEntity> reserveList;
 	public Order order = new Order();
-	public static final String RULE="HH:mm";
-	public static final SimpleDateFormat FORMAT=new SimpleDateFormat(RULE);
 	DateFormat DATE_FORMAT = new DateFormat();
-	SimpleDateFormat RULE_1 =new SimpleDateFormat("dd/MM/yyyy HH:mm");
+	SimpleDateFormat FORMAT = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 	
 	public Table() {}
 	public Table(int size, int tableNo, int isoccupied) {
@@ -50,6 +48,7 @@ public class Table {
 			reserveList=new ArrayList<ReservationEntity>();
 			Scanner sc=new Scanner(new BufferedReader(new FileReader("reservation.txt")));
 			sc.nextLine();
+			
 			while(sc.hasNext()){
 				String temp[]=sc.nextLine().split(",");
 				ReservationEntity r=new ReservationEntity();
@@ -71,61 +70,61 @@ public class Table {
 	        }
 	        return reserveList;
      }
-  
-	public void reservationRemove() throws ParseException,IOException
-  {
+  public void reservationRemove() throws ParseException{
 	  int index;
 	  Scanner sc=new Scanner(System.in);
+	  SimpleDateFormat sdf=new SimpleDateFormat("HH:mm");
 	  Calendar calendar=Calendar.getInstance();
 	  Date now=calendar.getTime();
 	  
 	  do{
 		  int i=1;
 		  reserveList=getReservationAll();
-		  for(Iterator<ReservationEntity> j=reserveList.iterator();j.hasNext();)
-		  {
+		  for(Iterator<ReservationEntity> j=reserveList.iterator();j.hasNext();){
 			  ReservationEntity temp=j.next();
-			  System.out.println( i +" " +temp.getDate()+ "          " + temp.getName()+"            "+temp.getContact()+"         " +temp.getPeople()+"        "+FORMAT.format(temp.getStart())+ "                " + FORMAT.format(temp.getEnd()) + "          " + temp.getTableNo());
+			  temp.setEnd();
+			  System.out.println( i +" " +temp.getDate()+ "          " + temp.getName()+"            "+temp.getContact()+"         " +temp.getPeople()+"        "+sdf.format(temp.getStart())+ "                " + sdf.format(temp.getEnd()) + "          " + temp.getTableNo());
 			  i++;
 		  }
 		  System.out.println("Which one to cancel.If no press 0:");
 		  index=sc.nextInt();
-		  if(index>0 && index<=reserveList.size())
-		  {
+		  if(index>0 && index<=reserveList.size()){
 			  reserveList.remove(index-1);
-			  PrintWriter updated = new PrintWriter(new BufferedWriter(new FileWriter("reservation.txt", false)));
-				  updated.println("date,name,contact,people,starttime,tableNo,occcupied");
-					for(Iterator<ReservationEntity> j = reserveList.iterator(); j.hasNext();)
-					{
+			  try(PrintWriter updated = new PrintWriter(new BufferedWriter(new FileWriter("reservation.txt", false)))){
+			     updated.println("date,name,contact,people,starttime,tableNo,occcupied");
+					for(Iterator<ReservationEntity> j = reserveList.iterator(); j.hasNext();){
 						ReservationEntity temp = j.next();
 						updated.println(temp.getDate()+","+ temp.getName()+","+temp.getContact()+"," +temp.getPeople()+","+FORMAT.format(temp.getStart())+ "," + temp.getTableNo()+",");
-						if(now.after(temp.getStart())&&now.before(temp.getEnd()))
-						{
+						if(now.after(temp.getStart())&&now.before(temp.getEnd())){
 							updated.print("1\n");
 						}
 						else
 							updated.print("0\n");
 					}
 					System.out.println("Reservation Successful removed");
-					updated.close();
+		     }catch(IOException e){
+		    	 
+		    	 System.err.println("IOEXception:"+e.getMessage());
+		     }
 				  
 			  
 		  }
-		  else if(index==0)
+		  else 
+			  if(index==0)
 			  break;
 		  else
 			  System.out.println("The reservation is not exist");
 	  }while(index!=0);
-	  sc.close();
 	  
- }
-	
+  }
   public ArrayList<ReservationEntity> getReservationThisDay(String Date) throws ParseException{
-	  try{
-			reserveList=new ArrayList<ReservationEntity>();
-			Scanner sc=new Scanner(new BufferedReader(new FileReader("reservation.txt")));
+	  
+	 reserveList=new ArrayList<ReservationEntity>();
+	  try{		
+		  
+		    Scanner sc=new Scanner(new BufferedReader(new FileReader("reservation.txt")));
 			sc.nextLine();
-			while(sc.hasNext()){
+		    while(sc.hasNext()){
 				String temp[]=sc.next().split(",");
 				ReservationEntity r=new ReservationEntity();
 				r.setDate(temp[0]);
@@ -146,15 +145,15 @@ public class Table {
 		
 		          err1.printStackTrace();
 	        }
-	  
-	       
 	        return reserveList;
 	        
    }
-  public ArrayList<ReservationEntity> getReservationCurrent() throws ParseException {
-	  try{
-			reserveList=new ArrayList<ReservationEntity>();
+  public ArrayList<ReservationEntity> getReservationCurrent() throws ParseException{
+	  
+		reserveList=new ArrayList<ReservationEntity>();
+		try{
 			Scanner sc=new Scanner(new BufferedReader(new FileReader("reservation.txt")));
+			
 			while(sc.hasNext()){
 				String temp[]=sc.next().split(",");
 				ReservationEntity r=new ReservationEntity();
@@ -179,11 +178,13 @@ public class Table {
 	        return reserveList;
 	        
    }  
-   public boolean reserveTable(String date,Date Start,String People,String name,String Contact,String tableNum)throws ParseException,IOException{
+   public boolean reserveTable(String date,Date Start,String People,String name,String Contact,String tableNum)throws ParseException{
 	   boolean reservesucceessfully =false;
 	   getReservationThisDay(date);
+	   String pattern="HH:mm";
+	   SimpleDateFormat sdf=new SimpleDateFormat(pattern);
 	   Calendar calendar=Calendar.getInstance();
-	   if(reserveList!=null){
+	   if(reserveList.size()>0){
 		   for(Iterator<ReservationEntity> j=reserveList.iterator();j.hasNext();){
 			   ReservationEntity temp=j.next();
 			   if(temp.getPeople().equals(People)){
@@ -195,13 +196,17 @@ public class Table {
 					   if(!((Start.getTime() == temp.getStart().getTime()) || (End.getTime() == temp.getEnd().getTime()))){
 						  if(!(Start.getTime()<=(temp.getEnd().getTime()+4))){
 						   if((Start.getTime() - End.getTime())/(60 * 1000) % 60 <= 60*60*1000){
+							 try{  
 							   String fileName= "reservation.txt";
 							   FileWriter filewriter = new FileWriter(fileName,true); //the true will append the new data
-							   filewriter.write("\n"+date + "," + name + "," + Contact +","+ People + "," +   FORMAT.format(Start) + ","+ tableNum +","+ "0");//appends the string to the file
+							   filewriter.write("\n"+date + "," + name + "," + Contact +","+ People + "," +   sdf.format(Start) + ","+ tableNum +","+ "0");//appends the string to the file
 							   filewriter.close();
 							   reservesucceessfully = true;
+							 }catch(IOException e){
+								 System.err.println("IOEXception:"+e.getMessage());
+							 }
 							   
-						   }
+						   
 						  }
 					   }
 						
@@ -210,12 +215,17 @@ public class Table {
 			   }
 		   }
 	   }
+	   }
 	   else{
+		  try{
 		   String fileName= "reservation.txt";
 		   FileWriter filewriter = new FileWriter(fileName,true); //the true will append the new data
 		   filewriter.write("\n"+date + "," + name + "," + Contact +","+ People + "," +   FORMAT.format(Start) + ","+ tableNo +","+ "0");//appends the string to the file
 		   filewriter.close();
 		   reservesucceessfully = true;
+		  }catch(IOException e){
+				 System.err.println("IOEXception:"+e.getMessage());
+		  }
 	   }
 	   return reservesucceessfully;
 	   
@@ -223,24 +233,19 @@ public class Table {
    public ReservationEntity Reserveandallocate(String date,Date Start,String People,String tableNum) throws ParseException, IOException{//For today the reservation made before will be conducted so need change occupied to 1
 	    Scanner sc=new Scanner(System.in);
 	    reserveList=new ArrayList<ReservationEntity>();
+	    SimpleDateFormat sdf=new SimpleDateFormat("dd/MM/yyyy HH:mm");
 	    Date End=DATE_FORMAT.addAnHour(Start);
-	    reserveList=getReservationThisDay(date);
-	    for(Iterator<ReservationEntity> j= reserveList.iterator(); j.hasNext();)
-	    {
+	    for(Iterator<ReservationEntity> j= reserveList.iterator(); j.hasNext();){
 	    	ReservationEntity temp = j.next();
-	    	if(Integer.parseInt(temp.getTableNo())<Integer.parseInt(tableNum))
-	    	{
+	    	if(Integer.parseInt(temp.getTableNo())<Integer.parseInt(tableNum)){
 	    			j.remove();
-	    	}
+	    		}
 	    }
-	    if(reserveList.size()>0)
-	    {
+	    if(reserveList.size()>0){
 	    
-	    		for(ReservationEntity i: reserveList)
-	    		{
-	    			if(Integer.parseInt(i.getPeople())<=size && Integer.parseInt(i.getPeople())>(size-2))
-	    			{
-	    					Date iStart = FORMAT.parse(i.getDate()+ " " + DATE_FORMAT.getTime(i.getStart()));
+	    		for(ReservationEntity i: reserveList){
+	    			if(Integer.parseInt(i.getPeople())<=size && Integer.parseInt(i.getPeople())>(size-2)){
+	    					Date iStart = sdf.parse(i.getDate()+ " " + DATE_FORMAT.getTime(i.getStart()));
 	    					Date iEnd =DATE_FORMAT.addAnHour(iStart);
 	    					i.setEnd();
 	    			
@@ -261,17 +266,14 @@ public class Table {
 	    								return i;
 	    		    				}else{
 	    		    					System.out.println("The time may overlapped with others");
-	    		    					sc.close();
 	    		    					return null;
 	    		    				}
 	    						}else{
 	    							System.out.println("This time already overlapped with others");
-	    							sc.close();
 	    							return null;
 	    						}
 	    	  			}else{ 
 	    						System.out.println("This time is reserved already");
-	    						sc.close();
 	    						return null;
 	    					}
 	    				}
@@ -286,14 +288,44 @@ public class Table {
 	    			filewriter.write("\r"+date + "," + "," + name + "," + contact + "," + People + "," + tableNum+","+ DATE_FORMAT.getTime(Start)+","+ "1");
 					filewriter.close();
 	    			this.isoccupied = 1;
-	    			sc.close();
 	    			return new ReservationEntity(date, DATE_FORMAT.getTime(Start),People,name,contact,tableNum);
 	    		}
-	            sc.close();
 	    		return null;
 	    	
 	    
-	    		}	   
+	    		}	  
+   public void removeReservationOnPayment(int tableNum) throws ParseException{
+		//tableNum, occupied bit=1
+		//writing to file
+		Calendar cal = Calendar.getInstance();
+		Date currentTime = cal.getTime();
+		reserveList = getReservationAll();
+		for(Iterator <ReservationEntity> r = reserveList.iterator(); r.hasNext(); ){
+			ReservationEntity reservation = r.next(); 
+			if(Integer.parseInt(reservation.getTableNo())==tableNum){
+				r.remove();
+			}
+		}
+		//tableNum, occupied bit=1
+		try(PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("reservation.txt", false)))) {
+		out.println("date,name,contact,people,start,tableNo,occupied");
+		for(Iterator<ReservationEntity> r = reserveList.iterator(); r.hasNext();){
+			ReservationEntity reservation = r.next();
+			reservation.setEnd();
+		out.print(reservation.getDate()+","+ DATE_FORMAT.getTime(reservation.getStart())+","+reservation.getName()+","+reservation.getPeople()+","+
+	    			reservation.getContact()+","+ reservation.getTableNo());
+			if(reservation.getStart().before(currentTime)&&currentTime.before(reservation.getEnd())){
+				out.print(",1\n");
+			}
+			else
+				out.print(",0\n");
+		}
+		System.out.println("Reservation Successfully removed");
+		}catch (IOException e) {
+	    //exception handling left as an exercise for the reader
+		}
+   }
+                
 	   
    }
 
