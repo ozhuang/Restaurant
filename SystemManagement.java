@@ -101,7 +101,7 @@ public class SystemManagement
 			System.out.println("d. Desserts");
 			System.out.println("b. Beverages");
 			check = sc.next().charAt(0);
-		  }while(check=='a'||check=='m'||check=='d'||check=='b');
+		  }while(check!='a'&&check!='m'&&check!='d'&&check!='b');
 		itm.setType(check);
 		System.out.println("Please enter price of item");
 		itm.setPrice(sc.next());
@@ -121,7 +121,7 @@ public class SystemManagement
 	   
 	    	try(PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("item.txt",true))))
 	    	{
-	    		out.print("\n"+itm.getItemID()+","+itm.getType()+","+itm.getName()+","+itm.getPrice()+","+itm.getDescription()+","+itm.getDiscountedPrice());	    				
+	    		out.println(itm.getItemID()+","+itm.getType()+","+itm.getName()+","+itm.getPrice()+","+itm.getDescription()+","+itm.getDiscountedPrice());	    				
 	            result = true;    	
 	    	}
 	    	catch(IOException ex)
