@@ -188,8 +188,21 @@ public class Restaurant
 			        seatMan.checkTable(people);
 			        break;
 			// Print Revenue
-			case 6: sysm = new SystemManagement();
-				    sysm.printRevenue();
+			case 6: 
+					System.out.println("Revenue sorted by?");
+					System.out.println("1. By date");
+					System.out.println("2. By month");
+					System.out.println("3. Back to Main Menu");
+					switch(sc.nextInt()){
+					case 1: sysm = new SystemManagement();
+				    		sysm.printRevenue(1);
+				    		break;
+					case 2: sysm = new SystemManagement();
+				    		sysm.printRevenue(2);
+				    		break;
+					case 3: break;
+					}
+				
 				    break;
 			default: System.out.println("Invalid Input!");
 				     break; 
