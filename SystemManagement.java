@@ -356,9 +356,72 @@ public class SystemManagement
 		return result;
 	}
 	
-	public void printRevenue()
+	public void printRevenue(int choice)
 	{
-		
+		try{
+			Scanner sc = new Scanner(System.in);
+			double total = 0;
+			FileReader     frStream = new FileReader("order.txt");
+			BufferedReader brStream = new BufferedReader(frStream);
+			String inputLine ;
+			ArrayList<String> history = new ArrayList<String>();
+			
+			// read file
+			do {
+				inputLine = brStream.readLine(); // read in a line
+				history.add(inputLine);
+			}while (inputLine != null);
+			brStream.close();
+			// choose by date(1)
+			
+			if (choice == 1){
+				
+				System.out.println("Enter the date: (dd/MM/yyyy)");
+				String date = sc.next();
+				for (int i = 0; i < history.size(); i++){
+					String[] parts = history.get(i).split(",");
+					if (parts[0] == date){
+						total += Double.parseDouble(parts[1]);
+					}
+				}
+				if (total != 0){
+					System.out.println("Revenue for " + date + " : " + total);
+					return;
+				}
+			}
+			// choose by month (2)
+			else {
+				System.out.println("Enter month: (MM)");
+				String month = sc.next();
+				for (int i = 0; i < history.size(); i++){
+					String[] parts = history.get(i).split("/|\\,");
+					if (parts[1] == month){
+						total += Double.parseDouble(parts[3]);
+					}
+				}
+				if (total != 0){
+					System.out.println("Revenue for " + month + " : " + total);
+					return;
+				}
+			}
+			System.out.println("No revenue! / Revenue not found! ");
+			
+			
+
+
+		}
+		catch ( FileNotFoundException e ) {
+			System.out.println( "Error opening the input file!"
+					+ e.getMessage() );
+			System.exit( 0 );
+		}
+		catch ( IOException e ) {
+			System.out.println( "IO Error!" + e.getMessage() );
+			e.printStackTrace();
+			System.exit( 0 );
+		}
+
+
 	}
 	
 	public ArrayList<Staff> getStaffID() throws FileNotFoundException,IOException{
