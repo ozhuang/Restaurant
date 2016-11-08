@@ -53,7 +53,7 @@ public class Menu
 			while(sc.hasNext())
 			{
 				String current[] = sc.nextLine().split(",");
-				Item item = new Item(current[0],current[1],current[2].charAt(0),current[3],current[4],current[5]);
+				Item item = new Item(current[0],current[1].charAt(0),current[2],current[3],current[4],current[5]);
 				itemList.add(item);
 			}
 			sortItems();

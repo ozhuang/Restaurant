@@ -17,7 +17,7 @@ public class SystemManagement
 	
 	public SystemManagement()
 	{
-	
+		
 	}
 	
 	public void getItems()throws IOException // reading from the file and updating it into the array list
@@ -34,8 +34,9 @@ public class SystemManagement
 			while(sc.hasNext())
 			{
 				String current[] = sc.nextLine().split(",");
-				Item item = new Item(current[0],current[1],current[2].charAt(0),current[3],current[4],current[5]);
+				Item item = new Item(current[0],current[1].charAt(0),current[2],current[3],current[4],current[5]);
 				itemList.add(item);
+				itemID++;
 			}
 			sc.close();
 		}
@@ -354,9 +355,8 @@ public class SystemManagement
 		return result;
 	}
 	
-	public void printRevenue(int choice)
+	public void printRevenue(int choice) throws IOException,FileNotFoundException
 	{
-		try{
 			Scanner sc = new Scanner(System.in);
 			double total = 0;
 			FileReader     frStream = new FileReader("order.txt");
@@ -403,22 +403,6 @@ public class SystemManagement
 				}
 			}
 			System.out.println("No revenue! / Revenue not found! ");
-			
-			
-
-
-		}
-		catch ( FileNotFoundException e ) {
-			System.out.println( "Error opening the input file!"
-					+ e.getMessage() );
-			System.exit( 0 );
-		}
-		catch ( IOException e ) {
-			System.out.println( "IO Error!" + e.getMessage() );
-			e.printStackTrace();
-			System.exit( 0 );
-		}
-
 
 	}
 	

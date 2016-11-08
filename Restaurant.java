@@ -37,23 +37,21 @@ public class Restaurant
 			switch(choice)
 			{
 			// Manage Menu
-			case 1: System.out.println("1.Create a new menu item");
+			case 1: sysm = new SystemManagement();
+					System.out.println("1.Create a new menu item");
 			        System.out.println("2.Update an existing menu item");
 			        System.out.println("3.Remove an existing menu item");
 			        System.out.println("4.Back to Main Menu");
 			        switch(sc.nextInt())
 			        {
-			        case 1: sysm = new SystemManagement();
-			        	    if(sysm.createItem())
+			        case 1: if(sysm.createItem())
 			        	        System.out.println("Successfully Added!");
 			                else 
 			                	System.out.println("Process Failed!");
 			                break;
-			        case 2: sysm = new SystemManagement();
-			                sysm.updateItem();
+			        case 2: sysm.updateItem();
 			                break;
-			        case 3: sysm = new SystemManagement();
-	                        sysm.deleteItem();
+			        case 3: sysm.deleteItem();
 	                        break;
 			        case 4: break;
 			        }
@@ -189,16 +187,15 @@ public class Restaurant
 			        break;
 			// Print Revenue
 			case 6: 
+					sysm = new SystemManagement();
 					System.out.println("Revenue sorted by?");
 					System.out.println("1. By date");
 					System.out.println("2. By month");
 					System.out.println("3. Back to Main Menu");
 					switch(sc.nextInt()){
-					case 1: sysm = new SystemManagement();
-				    		sysm.printRevenue(1);
+					case 1: sysm.printRevenue(1);
 				    		break;
-					case 2: sysm = new SystemManagement();
-				    		sysm.printRevenue(2);
+					case 2: sysm.printRevenue(2);
 				    		break;
 					case 3: break;
 					}
