@@ -10,7 +10,7 @@ public class Item
 		
 	}
 	 
-	public Item( String itemID, String name, char type, String description,String price,String discountedPrice) //create an new object
+	public Item( String itemID, char type, String name,  String description,String price,String discountedPrice) //create an new object
 	{
 		this.itemID = itemID;
 		this.name = name;
